@@ -24,25 +24,18 @@ class QuestionModelTests(TestCase):
 
         self.assertIs(future_question.was_published_recently(), False)
 
-    def test_was_published_recently_4_old_question(self):
+    def test_was_pub_recent_4_old_N_recent_q(self):
         """
         was_published_recently() returns False for questions whose pub_date
         is older than 1 day.
         """
         time = timezone.now() - datetime.timedelta(days=1, seconds=1)
-        old_question = Question(pub_date=time)
+        time2 = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
 
-        self.assertIs(old_question.was_published_recently(), False)
+        old_q, recent_q = Question(pub_date=time), Question(pub_date=time2)
 
-    def test_was_published_recently_4_recent_question(self):
-        """
-        was_published_recently() returns True for questions whose pub_date
-        is within the last day.
-        """
-        time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
-        recent_question = Question(pub_date=time)
-
-        self.assertIs(recent_question.was_published_recently(), True)
+        self.assertIs(old_q.was_published_recently(), False)
+        self.assertIs(recent_q.was_published_recently(), True)
 
 
 class QuestionIndexViewTests(TestCase):
@@ -74,7 +67,10 @@ class QuestionIndexViewTests(TestCase):
 
         response = self.client.get(reverse('polls:index'))
 
-        self.assertQuerysetEqual(response.context['latest_question_list'], ['<Question: Past question.>'])
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            ['<Question: Past question.>']
+        )
 
     def test_two_past_questions(self):
         create_question(question_text="Past question 1.", days=-30)
@@ -82,7 +78,10 @@ class QuestionIndexViewTests(TestCase):
 
         response = self.client.get(reverse('polls:index'))
 
-        self.assertQuerysetEqual(response.context['latest_question_list'], ['<Question: Past question 2.>', '<Question: Past question 1.>'])
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            ['<Question: Past question 2.>', '<Question: Past question 1.>']
+        )
 
 
 class QuestionDetailViewTests(TestCase):
@@ -98,6 +97,8 @@ class QuestionDetailViewTests(TestCase):
     def test_past_question(self):
         past_question = create_question(question_text='Past Question.', days=-5)
 
-        response = self.client.get(reverse('polls:detail', args=(past_question.id,)))
+        response = self.client.get(
+            reverse('polls:detail', args=(past_question.id,))
+        )
 
         self.assertContains(response, past_question.question_text)

@@ -33,7 +33,7 @@ class IndexView(generic.ListView):
 #     # try:
 #     #     question = Question.objects.get(pk=question_id)
 #     # except Question.DoesNotExist:
-#     #     raise Http404('Questin does not exits')
+#     #     raise Http404('Questin does not exit')
 #     # return render(request, 'polls/detail.html', {'question': question})
 
 #     question = get_object_or_404(Question, pk=question_id)
