@@ -16,6 +16,8 @@ from .models import Choice, Question
 #     latest_question_list = Question.objects.order_by('-pub_date')[:5]
 #     context = {'latest_question_list': latest_question_list}
 #     return render(request, 'polls/index.html', context)
+
+
 class IndexView(generic.ListView):
     """for ListView, automatically generated context variable is question_list."""
     template_name = 'polls/index.html'
@@ -57,9 +59,10 @@ class ResultsView(generic.DetailView):
     template_name = 'polls/results.html'
 
 
-def vote(request, question_id):
+def vote(request, question_id):  # form => only logic,no template, HttpResponseRedirect
     # return HttpResponse("vote %s" % question_id)
     question = get_object_or_404(Question, pk=question_id)
+    print(request.POST)
 
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choices'])

@@ -14,7 +14,8 @@
 {% endfor %}
 </ul> {% endcomment %}
 
-{% if error_message %} <p><strong>{{ error_message }}</strong></p>{% endif %}
+<p><strong>{{ error_message }}</strong></p>
+{% comment %} {% if error_message %} { error_message }} {% endif %} {% endcomment %}
 
 <form action='{% url "polls:vote" question.id %}' method='post'>
 {% csrf_token %}
